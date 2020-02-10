@@ -12,25 +12,94 @@
 // 3. start the relational OPERATORS ( finsihed bottom portion )
 // 4. finish friend relational operators and insertion/extraction OPERATORS
 // 5. ...
-
 // ============================================================================
 
 
 
 // -------- GroceryItem class implementation ----------------
 
-// Insertion and Extraction Operators
+// Insertion and Extraction Operators ( inside the class )
 friend std::ostream & operator<<( std::ostream & stream, const GroceryItem & groceryItem );
 friend std::istream & operator>>( std::istream & stream,       GroceryItem & groceryItem );
 
-// Relational Operators
-friend bool operator==( const GroceryItem & lhs, const GroceryItem & rhs );
-friend bool operator< ( const GroceryItem & lhs, const GroceryItem & rhs );
+// Relational Operators ( inside the class )
+friend bool operator==( const GroceryItem & lhs, const GroceryItem & rhs ) {
+
+}
+friend bool operator< ( const GroceryItem & lhs, const GroceryItem & rhs ) {
+  bool master;
+  int case = 0;
+  // case 0 : if lhs_upcCode is false, figure out if upcCodes are equal
+  // case 1 : if upcCodes are equal
+  // case 2 : if brandNames are equal
+  // case 3 ; if productNames are equal
+  // idea 1 ------------------------
+
+  bool lhs_upcCode = (lhs.upcCode() < rhs.upcCode());
+  if (lhs_upcCode) {
+    master = true;
+  } else {
+    bool rhs_upcCode = (rhs.upcCode() < lhs.upcCode());
+    bool upcCode_is_equal = (lhs_upcCode == false && rhs_upcCode == false);
+    if ( upcCode_is_equal ) {
+      case = 1;
+    } else {
+      master = false;
+    }
+  }
+
+  if (case == 1) {
+    bool lhs_brandName = (lhs.brandName() < rhs.brandName());
+    if (lhs_brandName) {
+      master = true;
+    } else {
+      bool rhs_brandName = (rhs.brandName() < lhs.brandName());
+      bool brandName_is_equal = (lhs_brandName == false && rhs_brandName == false);
+      if ( brandName_is_equal ) {
+        case = 2;
+      } else {
+        master = false;
+      }
+    }
+  }
+
+  if (case == 2) {
+    bool lhs_productName = (lhs.productName() < rhs.productName());
+    if (lhs_productName) {
+      master = true;
+    } else {
+      bool rhs_productName = (rhs.productName() < lhs.productName());
+      bool productName_is_equal = (lhs_productName == false && rhs_productName == false);
+      if ( productName_is_equal ) {
+        case = 3;
+      } else {
+        master = false;
+      }
+    }
+  }
+
+  if (case == 3) {
+    bool lhs_price = (lhs.price() < rhs.product());
+    if (lhs_price) {
+      master = true;
+    } else {
+      master = false;
+    }
+  return master;
+  }
+}
 
 // private: (data members)
 // ------Initialize data members using "Member Initialization"-------------
-// how do i use member intialization in def ctor if the default constructor uses the default keyword.
+// how do i use member init./ ctor init list, in def ctor if the default constructor uses
+// the default keyword.
+
 // is there a way to edit the def constructor?
+// ANSWER : NO, def ctor is not editable outside of the header file.
+//          Although the def ctor default builds the object
+//          with wack values, you cannot edit this unless the user provides at least
+//          one argument when creating the object, so that the non-default constructor is called
+//          instead of the deafult ctor
 
 // public:
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~ Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,7 +112,8 @@ friend bool operator< ( const GroceryItem & lhs, const GroceryItem & rhs );
 // -----------------------------------------------------------------------
 
 // ALL-parameter non-default constructor
-// this constructor utilizes constructor initliazation list,
+// this constructor utilizes constructor initialization list, and member initialization
+// no initialization in ctor body
 GroceryItem::GroceryItem( const std::string & productName,
                           const std::string & brandName,
                           const std::string & upcCode,
@@ -52,21 +122,27 @@ GroceryItem::GroceryItem( const std::string & productName,
                  _brandName(brandName),
                  _upcCode(upcCode),
                  _price(price) {}
+
 // Multi-Argument Constructors ----------------------------------------
+
 // cant be used : -----------------------------------------
 // 1 parameter constructor
-GroceryItem::GroceryItem(const std::string & productName)
-            : GroceryItem(productName, "brand name", "00000000000000", 0.0) {}
+// GroceryItem::GroceryItem(const std::string & productName)
+//             : GroceryItem(productName, "brand name", "00000000000000", 0.0) {}
 // 2 parameter constructor
-GroceryItem::GroceryItem(const std::string & productName,
-                         const std::string & brandName)
-            : GroceryItem(productName, brandName, "00000000000000", 0.0) {}
+// GroceryItem::GroceryItem(const std::string & productName,
+//                          const std::string & brandName)
+//            : GroceryItem(productName, brandName, "00000000000000", 0.0) {}
 // 3 parameter constructor
-GroceryItem::GroceryItem( const std::string & productName,
-             const std::string & brandName,
-             const std::string & upcCode)
-            : GroceryItem(productName, brandName, upcCode, 0.0) {}
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ CONSTRUCTORS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// GroceryItem::GroceryItem( const std::string & productName,
+//              const std::string & brandName,
+//               const std::string & upcCode)
+//                           : GroceryItem(productName, brandName, upcCode, 0.0) {}
+
+// ---------------- S O L U T I O N -------------------------------------------
+// notice how you only need to define one constructor because, the last 3 arguments
+// in the header file are given default values if not all 4 are given when creating an object
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~ end of CONSTRUCTORS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ============================ accessors and mutators ========================
 // = = = = = = = = = = = = = = = D O N E = = = = = = = = = = = = = = = =  = = = =
@@ -85,89 +161,32 @@ void GroceryList::price        ( double              price       ) { _price = pr
 
 
 // ================= RELATIONAL OPERATORS ===================================
-// = = = = = = = = = = = = = = D O N E = = = = = = = = = = = = = = = = = = = = =
+
+
+// Since I have already defined the less-than and equality relational operators:
+//     -- " friend bool operator< (), friend bool operator==() " --
+// I am simply using those operators to build the definitions for the following operators
+
 bool operator==( const GroceryItem & lhs, const GroceryItem & rhs ) {
-  return ( lhs.upcCode() == rhs.upcCode() && lhs.brandName() == rhs.brandName()
-           lhs.productName() == rhs.productName() && lhs.price() == rhs.price() );
+  return ( lhs == rhs );
 }
 
 bool operator!=( const GroceryItem & lhs, const GroceryItem & rhs ) {
-  return (!(lhs == rhs));
+  return ( !(lhs == rhs) );
 }
+
+
 
 bool operator< ( const GroceryItem & lhs, const GroceryItem & rhs ) {
-
-    bool master;
-    int case = 0;
-    // case 0 : if lhs_upcCode is false, figure out if upcCodes are equal
-    // case 1 : if upcCodes are equal
-    // case 2 : if brandNames are equal
-    // case 3 ; if productNames are equal
-    // idea 1 ------------------------
-
-    bool lhs_upcCode = (lhs.upcCode() < rhs.upcCode());
-    if (lhs_upcCode) {
-      master = true;
-    } else {
-      bool rhs_upcCode = (rhs.upcCode() < lhs.upcCode());
-      bool upcCode_is_equal = (lhs_upcCode == false && rhs_upcCode == false);
-      if ( upcCode_is_equal ) {
-        case = 1;
-      } else {
-        master = false;
-      }
-    }
-
-    if (case == 1) {
-      bool lhs_brandName = (lhs.brandName() < rhs.brandName());
-      if (lhs_brandName) {
-        master = true;
-      } else {
-        bool rhs_brandName = (rhs.brandName() < lhs.brandName());
-        bool brandName_is_equal = (lhs_brandName == false && rhs_brandName == false);
-        if ( brandName_is_equal ) {
-          case = 2;
-        } else {
-          master = false;
-        }
-      }
-    }
-
-    if (case == 2) {
-      bool lhs_productName = (lhs.productName() < rhs.productName());
-      if (lhs_productName) {
-        master = true;
-      } else {
-        bool rhs_productName = (rhs.productName() < lhs.productName());
-        bool productName_is_equal = (lhs_productName == false && rhs_productName == false);
-        if ( productName_is_equal ) {
-          case = 3;
-        } else {
-          master = false;
-        }
-      }
-    }
-
-    if (case == 3) {
-      bool lhs_price = (lhs.price() < rhs.product());
-      if (lhs_price) {
-        master = true;
-      } else {
-        master = false;
-      }
-    return master;
-  }
+  return ( lhs < rhs );
 }
-
-// Since I have already defined the less-than and equality relational operators,
-// I am simply using those operators to build the definitions for the following operators
 
 bool operator<=( const GroceryItem & lhs, const GroceryItem & rhs ) {
   return ( lhs < rhs || lhs == rhs );
 }
 
 bool operator> ( const GroceryItem & lhs, const GroceryItem & rhs ) {
-  return (!(lhs < rhs) && !(lhs == rhs));
+  return ( !(lhs < rhs) && !(lhs == rhs) ); // if lhs is less than or equal to rhs, will return false
 }
 
 bool operator>=( const GroceryItem & lhs, const GroceryItem & rhs ) {
