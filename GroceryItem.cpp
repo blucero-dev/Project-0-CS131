@@ -19,7 +19,13 @@
 
 // -------- GroceryItem class implementation ----------------
 
+// Insertion and Extraction Operators
+friend std::ostream & operator<<( std::ostream & stream, const GroceryItem & groceryItem );
+friend std::istream & operator>>( std::istream & stream,       GroceryItem & groceryItem );
 
+// Relational Operators
+friend bool operator==( const GroceryItem & lhs, const GroceryItem & rhs );
+friend bool operator< ( const GroceryItem & lhs, const GroceryItem & rhs );
 
 // private: (data members)
 // ------Initialize data members using "Member Initialization"-------------
